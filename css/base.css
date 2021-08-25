@@ -3,3 +3,6 @@ body{
     padding: 0;
     background-color: #434343;
 }
+a:hover {
+    color: #FFFFFF;
+}
