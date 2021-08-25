@@ -3,6 +3,9 @@ body{
     padding: 0;
     background-color: #434343;
 }
-a:hover {
+a:hover, a:link, a:visited, a:active{
     color: #FFFFFF;
+}
+a {
+    text-decoration: none;
 }
