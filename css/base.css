@@ -1,15 +1,59 @@
-body{
+* {
     margin: 0;
     padding: 0;
+}
+
+body {
     background-color: #434343;
 }
-a:hover, a:link, a:visited, a:active{
-    color: #FFFFFF;
+
+a:hover,
+a:link,
+a:visited,
+a:active {
+    color: #D80648;
+    /* background-color: green; */
 }
+
+a:hover {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
 a {
     text-decoration: none;
+    line-height: 75px;
 }
-#nav{
+
+.top-nav {
+    background-color: #434343;
+    height: 75px;
+    width: 500px;
+    margin: 5px auto;
     text-align: center;
-    margin: 0 auto;
+}
+
+.logo {
+    display: block;
+}
+
+.header {
+    height: 97px;
+    width: auto;
+    margin: 0px auto;
+    text-align: center;
+}
+
+.content {
+    height: 600px;
+    width: auto;
+    margin: 0px auto;
+    text-align: center;
+}
+
+.bottom {
+    height: 97px;
+    width: auto;
+    margin: 0px auto;
+    text-align: center;
 }
