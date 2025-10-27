@@ -5,130 +5,476 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>笛子的歌单</title>
     <style>
+        /* 基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
-            background-color: #fff5f7;
+            background: url('bg2.png') no-repeat center center fixed;
+            background-size: cover;
             color: #333;
-            max-width: 1000px;
-            margin: 0 auto;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 250px 1fr 300px;
+            gap: 20px;
             padding: 20px;
+            position: relative;
         }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+        
         h1 {
-            color: #ff6b9d;
+            grid-column: 1 / -1;
+            color: #6a89cc;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
         }
+        
+        /* 左侧歌单区域 */
+        .playlist-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .playlist-header {
+            font-size: 1.5em;
+            color: #6a89cc;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+        
+        .playlist-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .playlist-item {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .playlist-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .playlist-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .playlist-desc {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .playlist-count {
+            color: #6a89cc;
+            font-size: 0.8em;
+        }
+        
+        /* 中间歌曲区域 */
+        .song-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #a5b1c2;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            display: block;
+            margin: 0 auto 20px;
+        }
+        
+        .search-box:focus {
+            border-color: #6a89cc;
+            box-shadow: 0 0 8px rgba(106, 137, 204, 0.3);
+            outline: none;
+        }
+        
         .filter-section {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 25px;
             padding: 15px;
-            background-color: #ffecf1;
+            background: rgba(255, 255, 255, 0.75);
             border-radius: 15px;
+            backdrop-filter: blur(5px);
         }
+        
         .filter-btn {
-            padding: 8px 15px;
-            background-color: #ffb6d9;
-            border: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dcdde1;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            color: #4a69bd;
         }
+        
         .filter-btn:hover {
-            background-color: #ff8cb9;
-            transform: scale(1.05);
+            background: rgba(106, 137, 204, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+        
         .filter-btn.active {
-            background-color: #ff6b9d;
+            background: #6a89cc;
             color: white;
+            border-color: #6a89cc;
         }
+        
         .song-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 15px;
         }
+        
         .song-item {
-            padding: 12px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
         }
+        
         .song-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
+        
         .song-name {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: #2c3e50;
         }
+        
         .cute-tag {
             display: inline-block;
-            background-color: #ffd6e7;
-            color: #ff4d8f;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8em;
+            background: linear-gradient(135deg, #ff9ff3, #f368e0);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
             margin-top: 5px;
+            font-weight: bold;
         }
-        .search-box {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #ffb6d9;
-            border-radius: 25px;
-            margin-bottom: 20px;
-            font-size: 1em;
-            outline: none;
-        }
-        .search-box:focus {
-            border-color: #ff6b9d;
-        }
-        .no-results {
-            text-align: center;
-            color: #ff6b9d;
+        
+        /* 爱心图标样式 */
+        .heart-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            color: #ccc;
             font-size: 1.2em;
-            grid-column: 1 / -1;
+            transition: all 0.3s ease;
+        }
+        
+        .heart-icon:hover {
+            color: #ff6b9d;
+            transform: scale(1.2);
+        }
+        
+        .heart-icon.active {
+            color: #ff6b9d;
+        }
+        
+        /* 右侧个人信息区域 */
+        .profile-container {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        
+        .profile-image {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .profile-bio {
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .profile-bio h3 {
+            color: #6a89cc;
+            margin-bottom: 10px;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .modal-title {
+            margin-top: 0;
+            color: #6a89cc;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group input, 
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .submit-btn {
+            background: #6a89cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #4a69bd;
+        }
+        
+        /* 歌单详情面板 */
+        .playlist-songs-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 350px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 100;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .playlist-songs-container.show {
+            transform: translateX(0);
+        }
+        
+        .playlist-songs-header {
+            font-size: 1.2em;
+            color: #6a89cc;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .playlist-songs-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .playlist-songs-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .playlist-container, .song-container, .profile-container {
+                height: auto;
+                max-height: 300px;
+            }
+            
+            .song-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .filter-section {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>🎵 笛子的歌单 🎵</h1>
     
-    <input type="text" class="search-box" placeholder="搜索歌曲..." id="searchInput">
-    
-    <div class="filter-section">
-        <button class="filter-btn" data-filter="all">全部</button>
-        <button class="filter-btn" data-filter="A">A</button>
-        <button class="filter-btn" data-filter="B">B</button>
-        <button class="filter-btn" data-filter="C">C</button>
-        <button class="filter-btn" data-filter="D">D</button>
-        <button class="filter-btn" data-filter="E">E</button>
-        <button class="filter-btn" data-filter="F">F</button>
-        <button class="filter-btn" data-filter="G">G</button>
-        <button class="filter-btn" data-filter="H">H</button>
-        <button class="filter-btn" data-filter="J">J</button>
-        <button class="filter-btn" data-filter="K">K</button>
-        <button class="filter-btn" data-filter="L">L</button>
-        <button class="filter-btn" data-filter="M">M</button>
-        <button class="filter-btn" data-filter="N">N</button>
-        <button class="filter-btn" data-filter="P">P</button>
-        <button class="filter-btn" data-filter="Q">Q</button>
-        <button class="filter-btn" data-filter="R">R</button>
-        <button class="filter-btn" data-filter="S">S</button>
-        <button class="filter-btn" data-filter="T">T</button>
-        <button class="filter-btn" data-filter="W">W</button>
-        <button class="filter-btn" data-filter="X">X</button>
-        <button class="filter-btn" data-filter="Y">Y</button>
-        <button class="filter-btn" data-filter="Z">Z</button>
-        <button class="filter-btn" data-filter="cute">仅显示可爱风</button>
+    <!-- 左侧歌单区域 -->
+    <div class="playlist-container">
+        <div class="playlist-header">我的歌单</div>
+        <div class="playlist-list" id="playlistList">
+            <!-- 歌单列表将通过JavaScript动态生成 -->
+        </div>
     </div>
-    
-    <div class="song-list" id="songList">
-        <!-- 歌曲列表将通过JavaScript动态生成 -->
+
+    <!-- 中间歌曲区域 -->
+    <div class="song-container">
+        <input type="text" class="search-box" placeholder="搜索歌曲..." id="searchInput">
+        
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="A">A</button>
+            <button class="filter-btn" data-filter="B">B</button>
+            <button class="filter-btn" data-filter="C">C</button>
+            <button class="filter-btn" data-filter="D">D</button>
+            <button class="filter-btn" data-filter="E">E</button>
+            <button class="filter-btn" data-filter="F">F</button>
+            <button class="filter-btn" data-filter="G">G</button>
+            <button class="filter-btn" data-filter="H">H</button>
+            <button class="filter-btn" data-filter="J">J</button>
+            <button class="filter-btn" data-filter="K">K</button>
+            <button class="filter-btn" data-filter="L">L</button>
+            <button class="filter-btn" data-filter="M">M</button>
+            <button class="filter-btn" data-filter="N">N</button>
+            <button class="filter-btn" data-filter="P">P</button>
+            <button class="filter-btn" data-filter="Q">Q</button>
+            <button class="filter-btn" data-filter="R">R</button>
+            <button class="filter-btn" data-filter="S">S</button>
+            <button class="filter-btn" data-filter="T">T</button>
+            <button class="filter-btn" data-filter="W">W</button>
+            <button class="filter-btn" data-filter="X">X</button>
+            <button class="filter-btn" data-filter="Y">Y</button>
+            <button class="filter-btn" data-filter="Z">Z</button>
+            <button class="filter-btn" data-filter="cute">可爱风</button>
+        </div>
+        
+        <div class="song-list" id="songList">
+            <!-- 歌曲列表将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 右侧个人信息区域 -->
+    <div class="profile-container">
+        <img src="bg.png" alt="笛子的头像" class="profile-image">
+        <div class="profile-bio">
+            <h3>关于笛子</h3>
+            <p>音乐爱好者，喜欢收集各种风格的歌曲。这个歌单是我精心整理的收藏，包含流行、民谣、古风等多种类型的音乐。</p>
+            <p>希望通过音乐与大家分享我的心情和故事~</p>
+        </div>
+    </div>
+
+    <!-- 添加到歌单模态框 -->
+    <div class="modal" id="addToPlaylistModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeAddToPlaylistModalBtn">&times;</span>
+            <h2 class="modal-title">添加到歌单</h2>
+            <form id="addToPlaylistForm">
+                <div class="form-group">
+                    <label for="selectPlaylist">选择歌单</label>
+                    <select id="selectPlaylist" class="form-control" required>
+                        <!-- 歌单选项将通过JavaScript动态生成 -->
+                    </select>
+                </div>
+                <input type="hidden" id="selectedSongName">
+                <button type="submit" class="submit-btn">添加</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 歌单歌曲详情面板 -->
+    <div class="playlist-songs-container" id="playlistSongsContainer">
+        <div class="playlist-songs-header" id="playlistSongsHeader">歌单歌曲</div>
+        <ul class="playlist-songs-list" id="playlistSongsList">
+            <!-- 歌曲列表将通过JavaScript动态生成 -->
+        </ul>
     </div>
 
     <script>
@@ -387,6 +733,12 @@
             { name: "遇见你的时候所有星星都落到我头上", initial: "Y", cute: true }
         ];
 
+        // 歌单数据
+        let playlists = [
+            { id: 1, name: "最爱歌曲", description: "我最喜欢的歌曲合集", songs: [] },
+            { id: 2, name: "放松时光", description: "适合放松时听的歌曲", songs: [] }
+        ];
+
         // 渲染歌曲列表
         function renderSongs(filter = 'all', searchTerm = '') {
             const songListElement = document.getElementById('songList');
@@ -434,14 +786,131 @@
                         songItem.appendChild(cuteTag);
                     }
                     
+                    // 添加爱心图标
+                    const heartIcon = document.createElement('div');
+                    heartIcon.className = 'heart-icon';
+                    heartIcon.innerHTML = '❤️';
+                    heartIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        heartIcon.classList.toggle('active');
+                        openAddToPlaylistModal(song.name);
+                    });
+                    songItem.appendChild(heartIcon);
+                    
                     songListElement.appendChild(songItem);
                 });
             }
         }
         
+        // 渲染歌单列表
+        function renderPlaylists() {
+            const playlistListElement = document.getElementById('playlistList');
+            playlistListElement.innerHTML = '';
+            
+            playlists.forEach(playlist => {
+                const playlistItem = document.createElement('div');
+                playlistItem.className = 'playlist-item';
+                playlistItem.dataset.playlistId = playlist.id;
+                
+                const playlistInfo = document.createElement('div');
+                
+                const playlistName = document.createElement('div');
+                playlistName.className = 'playlist-name';
+                playlistName.textContent = playlist.name;
+                
+                const playlistDesc = document.createElement('div');
+                playlistDesc.className = 'playlist-desc';
+                playlistDesc.textContent = playlist.description;
+                
+                const playlistCount = document.createElement('div');
+                playlistCount.className = 'playlist-count';
+                playlistCount.textContent = `共 ${playlist.songs.length} 首歌曲`;
+                
+                playlistInfo.appendChild(playlistName);
+                playlistInfo.appendChild(playlistDesc);
+                playlistInfo.appendChild(playlistCount);
+                playlistItem.appendChild(playlistInfo);
+                
+                // 点击歌单显示歌曲列表
+                playlistItem.addEventListener('click', () => {
+                    showPlaylistSongs(playlist);
+                });
+                
+                playlistListElement.appendChild(playlistItem);
+            });
+        }
+
+        // 显示歌单中的歌曲
+        function showPlaylistSongs(playlist) {
+            const container = document.getElementById('playlistSongsContainer');
+            const header = document.getElementById('playlistSongsHeader');
+            const list = document.getElementById('playlistSongsList');
+            
+            header.textContent = `${playlist.name} (${playlist.songs.length}首)`;
+            list.innerHTML = '';
+            
+            if (playlist.songs.length === 0) {
+                const emptyMsg = document.createElement('li');
+                emptyMsg.className = 'playlist-songs-item';
+                emptyMsg.textContent = '这个歌单还没有歌曲哦~';
+                list.appendChild(emptyMsg);
+            } else {
+                playlist.songs.forEach(songName => {
+                    const song = songs.find(s => s.name === songName);
+                    const item = document.createElement('li');
+                    item.className = 'playlist-songs-item';
+                    item.textContent = songName;
+                    
+                    if (song && song.cute) {
+                        const cuteTag = document.createElement('span');
+                        cuteTag.className = 'cute-tag';
+                        cuteTag.textContent = '可爱风';
+                        cuteTag.style.marginLeft = '10px';
+                        item.appendChild(cuteTag);
+                    }
+                    
+                    list.appendChild(item);
+                });
+            }
+            
+            container.classList.add('show');
+        }
+
+        // 打开添加歌曲到歌单模态框
+        function openAddToPlaylistModal(songName) {
+            const modal = document.getElementById('addToPlaylistModal');
+            const selectElement = document.getElementById('selectPlaylist');
+            
+            // 填充歌单选择下拉框
+            selectElement.innerHTML = '';
+            playlists.forEach(playlist => {
+                const option = document.createElement('option');
+                option.value = playlist.id;
+                option.textContent = playlist.name;
+                selectElement.appendChild(option);
+            });
+            
+            // 设置选中的歌曲名称
+            document.getElementById('selectedSongName').value = songName;
+            
+            // 显示模态框
+            modal.classList.add('show');
+        }
+
+        // 关闭模态框
+        function closeAddToPlaylistModal() {
+            document.getElementById('addToPlaylistModal').classList.remove('show');
+        }
+
+        // 关闭歌单详情面板
+        function closePlaylistSongsContainer() {
+            document.getElementById('playlistSongsContainer').classList.remove('show');
+        }
+
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
             renderSongs();
+            renderPlaylists();
             
             // 筛选按钮事件
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -460,6 +929,47 @@
                 const activeFilter = document.querySelector('.filter-btn.active');
                 const filter = activeFilter ? activeFilter.dataset.filter : 'all';
                 renderSongs(filter, searchTerm);
+            });
+            
+            // 关闭添加到歌单模态框按钮
+            document.getElementById('closeAddToPlaylistModalBtn').addEventListener('click', closeAddToPlaylistModal);
+            
+            // 点击模态框外部关闭
+            document.getElementById('addToPlaylistModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('addToPlaylistModal')) {
+                    closeAddToPlaylistModal();
+                }
+            });
+            
+            // 表单提交
+            document.getElementById('addToPlaylistForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const playlistId = parseInt(document.getElementById('selectPlaylist').value);
+                const songName = document.getElementById('selectedSongName').value;
+                
+                // 找到对应的歌单
+                const playlist = playlists.find(p => p.id === playlistId);
+                if (playlist) {
+                    // 添加歌曲到歌单
+                    if (!playlist.songs.includes(songName)) {
+                        playlist.songs.push(songName);
+                        renderPlaylists(); // 更新歌单列表显示
+                        alert(`歌曲"${songName}"已成功添加到歌单"${playlist.name}"`);
+                    } else {
+                        alert(`歌曲"${songName}"已经在歌单"${playlist.name}"中了`);
+                    }
+                }
+                
+                closeAddToPlaylistModal();
+            });
+            
+            // 点击空白处关闭歌单详情面板
+            document.addEventListener('click', (e) => {
+                const container = document.getElementById('playlistSongsContainer');
+                if (!e.target.closest('.playlist-songs-container') && 
+                    !e.target.closest('.playlist-item')) {
+                    container.classList.remove('show');
+                }
             });
         });
     </script>
