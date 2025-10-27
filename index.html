@@ -1,54 +1,467 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/base.css">
-    <link rel="stylesheet" href="./css/waifu.css">
-    <title>沫儿-Channel</title>
+    <title>笛子的歌单</title>
+    <style>
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background-color: #fff5f7;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff6b9d;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ffecf1;
+            border-radius: 15px;
+        }
+        .filter-btn {
+            padding: 8px 15px;
+            background-color: #ffb6d9;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover {
+            background-color: #ff8cb9;
+            transform: scale(1.05);
+        }
+        .filter-btn.active {
+            background-color: #ff6b9d;
+            color: white;
+        }
+        .song-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .song-item {
+            padding: 12px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .song-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        .song-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .cute-tag {
+            display: inline-block;
+            background-color: #ffd6e7;
+            color: #ff4d8f;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #ffb6d9;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            font-size: 1em;
+            outline: none;
+        }
+        .search-box:focus {
+            border-color: #ff6b9d;
+        }
+        .no-results {
+            text-align: center;
+            color: #ff6b9d;
+            font-size: 1.2em;
+            grid-column: 1 / -1;
+        }
+    </style>
 </head>
-
 <body>
-    <!-- 头部区域 -->
-    <div class="header">
-        T
+    <h1>🎵 笛子的歌单 🎵</h1>
+    
+    <input type="text" class="search-box" placeholder="搜索歌曲..." id="searchInput">
+    
+    <div class="filter-section">
+        <button class="filter-btn" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="A">A</button>
+        <button class="filter-btn" data-filter="B">B</button>
+        <button class="filter-btn" data-filter="C">C</button>
+        <button class="filter-btn" data-filter="D">D</button>
+        <button class="filter-btn" data-filter="E">E</button>
+        <button class="filter-btn" data-filter="F">F</button>
+        <button class="filter-btn" data-filter="G">G</button>
+        <button class="filter-btn" data-filter="H">H</button>
+        <button class="filter-btn" data-filter="J">J</button>
+        <button class="filter-btn" data-filter="K">K</button>
+        <button class="filter-btn" data-filter="L">L</button>
+        <button class="filter-btn" data-filter="M">M</button>
+        <button class="filter-btn" data-filter="N">N</button>
+        <button class="filter-btn" data-filter="P">P</button>
+        <button class="filter-btn" data-filter="Q">Q</button>
+        <button class="filter-btn" data-filter="R">R</button>
+        <button class="filter-btn" data-filter="S">S</button>
+        <button class="filter-btn" data-filter="T">T</button>
+        <button class="filter-btn" data-filter="W">W</button>
+        <button class="filter-btn" data-filter="X">X</button>
+        <button class="filter-btn" data-filter="Y">Y</button>
+        <button class="filter-btn" data-filter="Z">Z</button>
+        <button class="filter-btn" data-filter="cute">仅显示可爱风</button>
     </div>
-    <!-- 内容区域 -->
-    <div class="content">
-        C
-    </div>
-    <!-- 底部区域 -->
-    <div class="bottom">
-        B
-    </div>
-    <div class="waifu" id="waifu">
-
-        <div class="waifu-tips" style="opacity: 1;"></div>
-        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
-        <div class="waifu-tool">
-            <span class="fui-home"></span>
-            <span class="fui-chat"></span>
-            <span class="fui-eye"></span>
-            <span class="fui-user"></span>
-            <span class="fui-photo"></span>
-            <span class="fui-info-circle"></span>
-            <span class="fui-cross"></span>
-        </div>
-
+    
+    <div class="song-list" id="songList">
+        <!-- 歌曲列表将通过JavaScript动态生成 -->
     </div>
 
+    <script>
+        // 歌曲数据
+        const songs = [
+            { name: "痒", initial: "Y" },
+            { name: "默", initial: "M" },
+            { name: "耿", initial: "G" },
+            { name: "笼", initial: "L" },
+            { name: "落", initial: "L" },
+            { name: "认错", initial: "R" },
+            { name: "妥协", initial: "T" },
+            { name: "唯一", initial: "W" },
+            { name: "后来", initial: "H" },
+            { name: "雨爱", initial: "Y" },
+            { name: "宁夏", initial: "N" },
+            { name: "可乐", initial: "K" },
+            { name: "泡沫", initial: "P" },
+            { name: "大雾", initial: "D" },
+            { name: "呓语", initial: "Y" },
+            { name: "王妃", initial: "W" },
+            { name: "春泥", initial: "C" },
+            { name: "如愿", initial: "R" },
+            { name: "海底", initial: "H" },
+            { name: "像鱼", initial: "X" },
+            { name: "偏爱", initial: "P" },
+            { name: "借月", initial: "J" },
+            { name: "房间", initial: "F" },
+            { name: "太阳", initial: "T" },
+            { name: "走马", initial: "Z" },
+            { name: "小半", initial: "X" },
+            { name: "虚拟", initial: "X" },
+            { name: "舍得", initial: "S" },
+            { name: "时候", initial: "S" },
+            { name: "阿刁", initial: "A" },
+            { name: "悟空", initial: "W" },
+            { name: "空心", initial: "K" },
+            { name: "大鱼", initial: "D" },
+            { name: "晚婚", initial: "W" },
+            { name: "青花", initial: "Q" },
+            { name: "嘉宾", initial: "J" },
+            { name: "迷宫", initial: "M" },
+            { name: "青柠", initial: "Q", cute: true },
+            { name: "大山", initial: "D" },
+            { name: "恋人", initial: "L" },
+            { name: "狐言", initial: "H" },
+            { name: "凡人", initial: "F" },
+            { name: "诀爱", initial: "J" },
+            { name: "招娣", initial: "Z" },
+            { name: "不染", initial: "B" },
+            { name: "年轮", initial: "N" },
+            { name: "天下", initial: "T" },
+            { name: "赤怜", initial: "C" },
+            { name: "达尔文", initial: "D" },
+            { name: "美人鱼", initial: "M" },
+            { name: "日不落", initial: "R" },
+            { name: "讲真的", initial: "J" },
+            { name: "凄美地", initial: "Q" },
+            { name: "上春山", initial: "S" },
+            { name: "小尖尖", initial: "X", cute: true },
+            { name: "有点甜", initial: "Y", cute: true },
+            { name: "全是爱", initial: "Q" },
+            { name: "小美满", initial: "X", cute: true },
+            { name: "调查中", initial: "D" },
+            { name: "从前说", initial: "C" },
+            { name: "想自由", initial: "X" },
+            { name: "关键词", initial: "G" },
+            { name: "怎么了", initial: "Z" },
+            { name: "像极了", initial: "X" },
+            { name: "起风了", initial: "Q" },
+            { name: "要抱抱", initial: "Y", cute: true },
+            { name: "天黑黑", initial: "T" },
+            { name: "第一天", initial: "D" },
+            { name: "凑热闹", initial: "C" },
+            { name: "跳楼机", initial: "T" },
+            { name: "一万万", initial: "Y" },
+            { name: "只有你", initial: "Z" },
+            { name: "疑心病", initial: "Y" },
+            { name: "萱草花", initial: "X", cute: true },
+            { name: "红烧肉", initial: "H" },
+            { name: "红昭愿", initial: "H" },
+            { name: "锦鲤抄", initial: "J" },
+            { name: "三国恋", initial: "S" },
+            { name: "九尾狐", initial: "J" },
+            { name: "眉间雪", initial: "M" },
+            { name: "白石溪", initial: "B" },
+            { name: "九万字", initial: "J" },
+            { name: "无色海", initial: "W" },
+            { name: "无情画", initial: "W" },
+            { name: "牵丝戏", initial: "Q" },
+            { name: "虞兮叹", initial: "Y" },
+            { name: "大天蓬", initial: "D" },
+            { name: "桃花诺", initial: "T" },
+            { name: "桃花笑", initial: "T", cute: true },
+            { name: "声声慢", initial: "S" },
+            { name: "广寒宫", initial: "G" },
+            { name: "壁上观", initial: "B" },
+            { name: "小城谣", initial: "X", cute: true },
+            { name: "枫叶城", initial: "F" },
+            { name: "放马川", initial: "F" },
+            { name: "半壶纱", initial: "B" },
+            { name: "庐州月", initial: "L" },
+            { name: "拜无忧", initial: "B" },
+            { name: "万梦星", initial: "W" },
+            { name: "故人叹", initial: "G" },
+            { name: "相思遥", initial: "X" },
+            { name: "九张机", initial: "J" },
+            { name: "从别后", initial: "C" },
+            { name: "Simon", initial: "S" },
+            { name: "我想念", initial: "W" },
+            { name: "我要你", initial: "W" },
+            { name: "有你在", initial: "Y" },
+            { name: "他不懂", initial: "T" },
+            { name: "若把你", initial: "R" },
+            { name: "新地球", initial: "X" },
+            { name: "醉赤壁", initial: "Z" },
+            { name: "小酒窝", initial: "X", cute: true },
+            { name: "向云端", initial: "X" },
+            { name: "虹之间", initial: "H" },
+            { name: "云与海", initial: "Y" },
+            { name: "疯人愿", initial: "F" },
+            { name: "达尔文", initial: "D" },
+            { name: "愿与愁", initial: "Y" },
+            { name: "恋爱ing", initial: "L", cute: true },
+            { name: "我好想你", initial: "W" },
+            { name: "我怀念的", initial: "W" },
+            { name: "我们的歌", initial: "W" },
+            { name: "我们的爱", initial: "W" },
+            { name: "修炼爱情", initial: "X" },
+            { name: "不死之身", initial: "B" },
+            { name: "光年之外", initial: "G" },
+            { name: "我还想她", initial: "W" },
+            { name: "岁月神偷", initial: "S" },
+            { name: "万有引力", initial: "W" },
+            { name: "风吹麦浪", initial: "F" },
+            { name: "阴天快乐", initial: "Y" },
+            { name: "千方百计", initial: "Q" },
+            { name: "爱的魔法", initial: "A" },
+            { name: "如果可以", initial: "R" },
+            { name: "一笑倾城", initial: "Y" },
+            { name: "最后一页", initial: "Z" },
+            { name: "第三人称", initial: "D" },
+            { name: "千年之恋", initial: "Q" },
+            { name: "空空如也", initial: "K" },
+            { name: "后会无期", initial: "H" },
+            { name: "有何不可", initial: "Y" },
+            { name: "心痛无医", initial: "X" },
+            { name: "今夜有雨", initial: "J" },
+            { name: "量身定做", initial: "L" },
+            { name: "穿越人海", initial: "C" },
+            { name: "身骑白马", initial: "S" },
+            { name: "漠河舞厅", initial: "M" },
+            { name: "枕边童话", initial: "Z", cute: true },
+            { name: "失恋无罪", initial: "S" },
+            { name: "暮色回响", initial: "M" },
+            { name: "无名的人", initial: "W" },
+            { name: "火力全开", initial: "H" },
+            { name: "灰色头像", initial: "H" },
+            { name: "断桥残雪", initial: "D" },
+            { name: "胡萝卜须", initial: "H" },
+            { name: "星座书上", initial: "X" },
+            { name: "匆匆那年", initial: "C" },
+            { name: "爸爸妈妈", initial: "B" },
+            { name: "公主殿下", initial: "G", cute: true },
+            { name: "等你下课", initial: "D" },
+            { name: "看我72变", initial: "K" },
+            { name: "爱情36计", initial: "A" },
+            { name: "十年人间", initial: "S" },
+            { name: "腐草为萤", initial: "F" },
+            { name: "烟雨行舟", initial: "Y" },
+            { name: "棠梨煎雪", initial: "T" },
+            { name: "俯首称臣", initial: "F" },
+            { name: "如我西沉", initial: "R" },
+            { name: "霜雪千年", initial: "S" },
+            { name: "神女劈观", initial: "S" },
+            { name: "玉露为乡", initial: "Y" },
+            { name: "One Spot", initial: "O" },
+            { name: "YES！OK!", initial: "Y", cute: true },
+            { name: "Letting Go", initial: "L" },
+            { name: "这，就是爱", initial: "Z" },
+            { name: "红色高跟鞋", initial: "H" },
+            { name: "越来越不懂", initial: "Y" },
+            { name: "别找我麻烦", initial: "B" },
+            { name: "背对背拥抱", initial: "B" },
+            { name: "爱笑的眼睛", initial: "A" },
+            { name: "可惜没如果", initial: "K" },
+            { name: "当冬夜渐暖", initial: "D" },
+            { name: "雪下的时候", initial: "X" },
+            { name: "想你时风起", initial: "X" },
+            { name: "多余的解释", initial: "D" },
+            { name: "岁月里的花", initial: "S" },
+            { name: "离别开出花", initial: "L" },
+            { name: "我的歌声里", initial: "W" },
+            { name: "我们的明天", initial: "W" },
+            { name: "一样的月光", initial: "Y" },
+            { name: "一直很安静", initial: "Y" },
+            { name: "最初的记忆", initial: "Z" },
+            { name: "爱要坦荡荡", initial: "A" },
+            { name: "这就是爱吗", initial: "Z" },
+            { name: "如果有来生", initial: "R" },
+            { name: "如果爱忘了", initial: "R" },
+            { name: "爱的回归线", initial: "A" },
+            { name: "遗失的心跳", initial: "Y" },
+            { name: "吻得太逼真", initial: "W" },
+            { name: "其实都没有", initial: "Q" },
+            { name: "易燃易爆炸", initial: "Y" },
+            { name: "奇妙能力歌", initial: "Q" },
+            { name: "会开花的云", initial: "H", cute: true },
+            { name: "会呼吸的痛", initial: "H" },
+            { name: "冬天的秘密", initial: "D" },
+            { name: "寂寞沙洲冷", initial: "J" },
+            { name: "大雨还在下", initial: "D" },
+            { name: "免我蹉跎苦", initial: "M" },
+            { name: "别问很可怕", initial: "B" },
+            { name: "快乐的扑满", initial: "K", cute: true },
+            { name: "被驯服的象", initial: "B" },
+            { name: "生生世世爱", initial: "S" },
+            { name: "人间不值得", initial: "R" },
+            { name: "吹灭小山河", initial: "C" },
+            { name: "三拜红尘凉", initial: "S" },
+            { name: "辞九门回忆", initial: "C" },
+            { name: "Tooooo Busy", initial: "T" },
+            { name: "Always Online", initial: "A" },
+            { name: "烟火里的尘埃", initial: "Y" },
+            { name: "永不失联的爱", initial: "Y" },
+            { name: "你最最最重要", initial: "N" },
+            { name: "不分手的恋爱", initial: "B" },
+            { name: "不潮不用花钱", initial: "B" },
+            { name: "阿拉斯加海湾", initial: "A" },
+            { name: "化身孤岛的鲸", initial: "H" },
+            { name: "有可能的夜晚", initial: "Y" },
+            { name: "你是我的风景", initial: "N" },
+            { name: "失恋阵线联盟", initial: "S" },
+            { name: "世界赠予我的", initial: "S" },
+            { name: "魔鬼中的天使", initial: "M" },
+            { name: "十二月的奇迹", initial: "S" },
+            { name: "是妈妈是女儿", initial: "S" },
+            { name: "昨夜风今宵月", initial: "Z" },
+            { name: "Baby, Don't Cry", initial: "B" },
+            { name: "不为谁而作的歌", initial: "B" },
+            { name: "来自天堂的魔鬼", initial: "L" },
+            { name: "我期待的不是雪", initial: "W" },
+            { name: "你就不要想起我", initial: "N" },
+            { name: "多远都要在一起", initial: "D" },
+            { name: "天亮以前说再见", initial: "T" },
+            { name: "第三十八年夏至", initial: "D" },
+            { name: "天龙八部之宿敌", initial: "T" },
+            { name: "明月不照离别人", initial: "M" },
+            { name: "我的一个道姑朋友", initial: "W" },
+            { name: "下雨了是我在想你", initial: "X" },
+            { name: "世界上的另一个我", initial: "S" },
+            { name: "从命运的河流飘过", initial: "C" },
+            { name: "四点的海棠花未眠", initial: "S", cute: true },
+            { name: "山茶花读不懂白玫瑰", initial: "S" },
+            { name: "就让这大雨全都落下", initial: "J" },
+            { name: "遇见你的时候所有星星都落到我头上", initial: "Y", cute: true }
+        ];
 
-
-    <script src="./jq/jquery.min.js"></script>
-    <script src="./js/live2d.js"></script>
-    <script src="./js/waifu-tips.js"></script>
-    <script type="text/javascript">
-        initModel()
+        // 渲染歌曲列表
+        function renderSongs(filter = 'all', searchTerm = '') {
+            const songListElement = document.getElementById('songList');
+            songListElement.innerHTML = '';
+            
+            let filteredSongs = songs;
+            
+            // 应用筛选
+            if (filter !== 'all') {
+                if (filter === 'cute') {
+                    filteredSongs = songs.filter(song => song.cute);
+                } else {
+                    filteredSongs = songs.filter(song => song.initial === filter);
+                }
+            }
+            
+            // 应用搜索
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filteredSongs = filteredSongs.filter(song => 
+                    song.name.toLowerCase().includes(term)
+                );
+            }
+            
+            // 显示结果
+            if (filteredSongs.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = '没有找到匹配的歌曲~';
+                songListElement.appendChild(noResults);
+            } else {
+                filteredSongs.forEach(song => {
+                    const songItem = document.createElement('div');
+                    songItem.className = 'song-item';
+                    
+                    const songName = document.createElement('div');
+                    songName.className = 'song-name';
+                    songName.textContent = song.name;
+                    songItem.appendChild(songName);
+                    
+                    if (song.cute) {
+                        const cuteTag = document.createElement('div');
+                        cuteTag.className = 'cute-tag';
+                        cuteTag.textContent = '可爱风';
+                        songItem.appendChild(cuteTag);
+                    }
+                    
+                    songListElement.appendChild(songItem);
+                });
+            }
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSongs();
+            
+            // 筛选按钮事件
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const filter = btn.dataset.filter;
+                    const searchTerm = document.getElementById('searchInput').value;
+                    renderSongs(filter, searchTerm);
+                });
+            });
+            
+            // 搜索框事件
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const searchTerm = e.target.value;
+                const activeFilter = document.querySelector('.filter-btn.active');
+                const filter = activeFilter ? activeFilter.dataset.filter : 'all';
+                renderSongs(filter, searchTerm);
+            });
+        });
     </script>
-
-
 </body>
-
 </html>
