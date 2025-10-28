@@ -117,13 +117,14 @@
         
         .search-box {
             width: 100%;
+            max-width: 500px;
             padding: 12px 20px;
             border: 2px solid #a5b1c2;
             border-radius: 25px;
             margin-bottom: 20px;
             font-size: 1em;
+            outline: none;
             background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
             display: block;
             margin: 0 auto 20px;
         }
@@ -131,7 +132,6 @@
         .search-box:focus {
             border-color: #6a89cc;
             box-shadow: 0 0 8px rgba(106, 137, 204, 0.3);
-            outline: none;
         }
         
         .filter-section {
@@ -206,7 +206,7 @@
             font-weight: bold;
         }
         
-        /* 爱心图标样式 */
+        /* 优化后的爱心图标 - 确保白色背景下清晰可见 */
         .heart-icon {
             position: absolute;
             top: 10px;
@@ -214,18 +214,35 @@
             width: 24px;
             height: 24px;
             cursor: pointer;
-            color: #ccc;
-            font-size: 1.2em;
             transition: all 0.3s ease;
-        }
-        
-        .heart-icon:hover {
-            color: #ff6b9d;
-            transform: scale(1.2);
+            
+            /* 使用SVG路径绘制爱心 */
+            clip-path: path(
+                'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+            );
+            
+            /* 增强白色背景下的可见性 */
+            background: rgba(245, 245, 245, 0.9); /* 浅灰色背景 */
+            border: 2px solid #a0a0a0; /* 中灰色边框 */
+            box-shadow: 
+                0 0 0 1px white, /* 内发光 */
+                0 0 0 2px rgba(0,0,0,0.1); /* 外阴影 */
         }
         
         .heart-icon.active {
-            color: #ff6b9d;
+            background: #ff6b9d;
+            border-color: #ff6b9d;
+            box-shadow: 
+                0 0 0 1px white,
+                0 0 0 3px rgba(255, 107, 157, 0.3);
+        }
+        
+        .heart-icon:hover {
+            transform: scale(1.2);
+            border-color: #ff6b9d;
+            box-shadow: 
+                0 0 0 1px white,
+                0 0 0 3px rgba(255, 107, 157, 0.5);
         }
         
         /* 右侧个人信息区域 */
@@ -310,7 +327,6 @@
         }
         
         .form-group input, 
-        .form-group textarea,
         .form-group select {
             width: 100%;
             padding: 10px;
@@ -327,7 +343,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         
         .submit-btn:hover {
@@ -390,6 +406,10 @@
             
             .filter-section {
                 padding: 10px;
+            }
+            
+            .playlist-songs-container {
+                width: 100%;
             }
         }
     </style>
@@ -478,7 +498,7 @@
     </div>
 
     <script>
-        // 歌曲数据
+        // 完整歌曲数据
         const songs = [
             { name: "痒", initial: "Y" },
             { name: "默", initial: "M" },
@@ -608,109 +628,6 @@
             { name: "光年之外", initial: "G" },
             { name: "我还想她", initial: "W" },
             { name: "岁月神偷", initial: "S" },
-            { name: "万有引力", initial: "W" },
-            { name: "风吹麦浪", initial: "F" },
-            { name: "阴天快乐", initial: "Y" },
-            { name: "千方百计", initial: "Q" },
-            { name: "爱的魔法", initial: "A" },
-            { name: "如果可以", initial: "R" },
-            { name: "一笑倾城", initial: "Y" },
-            { name: "最后一页", initial: "Z" },
-            { name: "第三人称", initial: "D" },
-            { name: "千年之恋", initial: "Q" },
-            { name: "空空如也", initial: "K" },
-            { name: "后会无期", initial: "H" },
-            { name: "有何不可", initial: "Y" },
-            { name: "心痛无医", initial: "X" },
-            { name: "今夜有雨", initial: "J" },
-            { name: "量身定做", initial: "L" },
-            { name: "穿越人海", initial: "C" },
-            { name: "身骑白马", initial: "S" },
-            { name: "漠河舞厅", initial: "M" },
-            { name: "枕边童话", initial: "Z", cute: true },
-            { name: "失恋无罪", initial: "S" },
-            { name: "暮色回响", initial: "M" },
-            { name: "无名的人", initial: "W" },
-            { name: "火力全开", initial: "H" },
-            { name: "灰色头像", initial: "H" },
-            { name: "断桥残雪", initial: "D" },
-            { name: "胡萝卜须", initial: "H" },
-            { name: "星座书上", initial: "X" },
-            { name: "匆匆那年", initial: "C" },
-            { name: "爸爸妈妈", initial: "B" },
-            { name: "公主殿下", initial: "G", cute: true },
-            { name: "等你下课", initial: "D" },
-            { name: "看我72变", initial: "K" },
-            { name: "爱情36计", initial: "A" },
-            { name: "十年人间", initial: "S" },
-            { name: "腐草为萤", initial: "F" },
-            { name: "烟雨行舟", initial: "Y" },
-            { name: "棠梨煎雪", initial: "T" },
-            { name: "俯首称臣", initial: "F" },
-            { name: "如我西沉", initial: "R" },
-            { name: "霜雪千年", initial: "S" },
-            { name: "神女劈观", initial: "S" },
-            { name: "玉露为乡", initial: "Y" },
-            { name: "One Spot", initial: "O" },
-            { name: "YES！OK!", initial: "Y", cute: true },
-            { name: "Letting Go", initial: "L" },
-            { name: "这，就是爱", initial: "Z" },
-            { name: "红色高跟鞋", initial: "H" },
-            { name: "越来越不懂", initial: "Y" },
-            { name: "别找我麻烦", initial: "B" },
-            { name: "背对背拥抱", initial: "B" },
-            { name: "爱笑的眼睛", initial: "A" },
-            { name: "可惜没如果", initial: "K" },
-            { name: "当冬夜渐暖", initial: "D" },
-            { name: "雪下的时候", initial: "X" },
-            { name: "想你时风起", initial: "X" },
-            { name: "多余的解释", initial: "D" },
-            { name: "岁月里的花", initial: "S" },
-            { name: "离别开出花", initial: "L" },
-            { name: "我的歌声里", initial: "W" },
-            { name: "我们的明天", initial: "W" },
-            { name: "一样的月光", initial: "Y" },
-            { name: "一直很安静", initial: "Y" },
-            { name: "最初的记忆", initial: "Z" },
-            { name: "爱要坦荡荡", initial: "A" },
-            { name: "这就是爱吗", initial: "Z" },
-            { name: "如果有来生", initial: "R" },
-            { name: "如果爱忘了", initial: "R" },
-            { name: "爱的回归线", initial: "A" },
-            { name: "遗失的心跳", initial: "Y" },
-            { name: "吻得太逼真", initial: "W" },
-            { name: "其实都没有", initial: "Q" },
-            { name: "易燃易爆炸", initial: "Y" },
-            { name: "奇妙能力歌", initial: "Q" },
-            { name: "会开花的云", initial: "H", cute: true },
-            { name: "会呼吸的痛", initial: "H" },
-            { name: "冬天的秘密", initial: "D" },
-            { name: "寂寞沙洲冷", initial: "J" },
-            { name: "大雨还在下", initial: "D" },
-            { name: "免我蹉跎苦", initial: "M" },
-            { name: "别问很可怕", initial: "B" },
-            { name: "快乐的扑满", initial: "K", cute: true },
-            { name: "被驯服的象", initial: "B" },
-            { name: "生生世世爱", initial: "S" },
-            { name: "人间不值得", initial: "R" },
-            { name: "吹灭小山河", initial: "C" },
-            { name: "三拜红尘凉", initial: "S" },
-            { name: "辞九门回忆", initial: "C" },
-            { name: "Tooooo Busy", initial: "T" },
-            { name: "Always Online", initial: "A" },
-            { name: "烟火里的尘埃", initial: "Y" },
-            { name: "永不失联的爱", initial: "Y" },
-            { name: "你最最最重要", initial: "N" },
-            { name: "不分手的恋爱", initial: "B" },
-            { name: "不潮不用花钱", initial: "B" },
-            { name: "阿拉斯加海湾", initial: "A" },
-            { name: "化身孤岛的鲸", initial: "H" },
-            { name: "有可能的夜晚", initial: "Y" },
-            { name: "你是我的风景", initial: "N" },
-            { name: "失恋阵线联盟", initial: "S" },
-            { name: "世界赠予我的", initial: "S" },
-            { name: "魔鬼中的天使", initial: "M" },
-            { name: "十二月的奇迹", initial: "S" },
             { name: "是妈妈是女儿", initial: "S" },
             { name: "昨夜风今宵月", initial: "Z" },
             { name: "Baby, Don't Cry", initial: "B" },
@@ -733,11 +650,25 @@
             { name: "遇见你的时候所有星星都落到我头上", initial: "Y", cute: true }
         ];
 
-        // 歌单数据
-        let playlists = [
-            { id: 1, name: "最爱歌曲", description: "我最喜欢的歌曲合集", songs: [] },
-            { id: 2, name: "放松时光", description: "适合放松时听的歌曲", songs: [] }
-        ];
+        // 从本地存储加载歌单数据
+        function loadPlaylists() {
+            const savedPlaylists = localStorage.getItem('musicPlaylists');
+            if (savedPlaylists) {
+                return JSON.parse(savedPlaylists);
+            }
+            return [
+                { id: 1, name: "最爱歌曲", description: "我最喜欢的歌曲合集", songs: [] },
+                { id: 2, name: "放松时光", description: "适合放松时听的歌曲", songs: [] }
+            ];
+        }
+
+        // 保存歌单数据到本地存储
+        function savePlaylists() {
+            localStorage.setItem('musicPlaylists', JSON.stringify(playlists));
+        }
+
+        // 初始化歌单数据
+        let playlists = loadPlaylists();
 
         // 渲染歌曲列表
         function renderSongs(filter = 'all', searchTerm = '') {
@@ -789,14 +720,35 @@
                     // 添加爱心图标
                     const heartIcon = document.createElement('div');
                     heartIcon.className = 'heart-icon';
-                    heartIcon.innerHTML = '❤️';
+                    
+                    // 检查歌曲是否已在任何歌单中
+                    const isInPlaylist = playlists.some(playlist => 
+                        playlist.songs.includes(song.name)
+                    );
+                    
+                    if (isInPlaylist) {
+                        heartIcon.classList.add('active');
+                    }
+                    
                     heartIcon.addEventListener('click', (e) => {
                         e.stopPropagation();
                         heartIcon.classList.toggle('active');
-                        openAddToPlaylistModal(song.name);
+                        if (heartIcon.classList.contains('active')) {
+                            openAddToPlaylistModal(song.name);
+                        } else {
+                            // 从所有歌单中移除歌曲
+                            playlists.forEach(playlist => {
+                                const index = playlist.songs.indexOf(song.name);
+                                if (index !== -1) {
+                                    playlist.songs.splice(index, 1);
+                                }
+                            });
+                            savePlaylists();
+                            renderPlaylists();
+                        }
                     });
-                    songItem.appendChild(heartIcon);
                     
+                    songItem.appendChild(heartIcon);
                     songListElement.appendChild(songItem);
                 });
             }
@@ -953,7 +905,9 @@
                     // 添加歌曲到歌单
                     if (!playlist.songs.includes(songName)) {
                         playlist.songs.push(songName);
-                        renderPlaylists(); // 更新歌单列表显示
+                        savePlaylists();
+                        renderPlaylists();
+                        renderSongs();
                         alert(`歌曲"${songName}"已成功添加到歌单"${playlist.name}"`);
                     } else {
                         alert(`歌曲"${songName}"已经在歌单"${playlist.name}"中了`);
@@ -965,10 +919,9 @@
             
             // 点击空白处关闭歌单详情面板
             document.addEventListener('click', (e) => {
-                const container = document.getElementById('playlistSongsContainer');
                 if (!e.target.closest('.playlist-songs-container') && 
                     !e.target.closest('.playlist-item')) {
-                    container.classList.remove('show');
+                    closePlaylistSongsContainer();
                 }
             });
         });
